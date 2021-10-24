@@ -1,9 +1,12 @@
+import torch
+import torch.nn as nn
+import torch.nn.functional as functional
 from torch.hub import load_state_dict_from_url
 import torch.utils.model_zoo as model_zoo
 from torchvision.models import resnet, mobilenetv2
 
-
 from . import classifier
+
 
 
 class ResNetBackbone(resnet.ResNet):
@@ -42,9 +45,3 @@ def mobilenetv2_backbone(pretrained_backbone=True, encoder_digit=64, progress=Tr
                                                                       n_classes=encoder_digit)
 
     return backbone_model
-
-
-
-if __name__ == '__main__':
-    model = resnet_backbone()
-    print(model)
