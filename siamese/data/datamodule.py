@@ -1,20 +1,20 @@
 import torch
+import sklearn
+import numpy as np
+import pandas as pd
+
+from tqdm import tqdm
+
+import pytorch_lightning as pl
+
+from PIL import Image, ImageOps
+
 from torch.utils.data import Dataset, DataLoader
 from torchvision.datasets import ImageFolder
 from siamese.transform.pair_transform import *
 from sklearn.model_selection import train_test_split
 
-import random
-import numpy as np
-import pandas as pd
-
-import pytorch_lightning as pl
 from typing import *
-
-from PIL import Image, ImageOps
-import sklearn
-from tqdm import tqdm, trange
-
 
 def transform_fn(train=False):
     if train:                                 
