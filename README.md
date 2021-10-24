@@ -1,2 +1,2 @@
 # siamese.pytorch
-Example of siamese network to detect difference on faces
+Example of siamese network to detect different handwritten characters
