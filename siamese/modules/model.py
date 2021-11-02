@@ -61,17 +61,23 @@ class SiameseTask(pl.LightningModule):
         self.log('val_epoch_loss', self.val_loss.compute(), logger=True)
         
     def configure_optimizers(self):
-        return optim.Adam(self.parameters(), lr=0.001, weight_decay=0.0005)
-    
-def siamese_net(pretrained=True, backbone_name="resnet18", encoder_digit=64, **kwargs):
+        return optim.RMSprop(self.parameters(), lr=0.0001, alpha=0.99, eps=1e-8, weight_decay=0.00005, momentum=0.9)
+     
+def siamese_net(pretrained=True, backbone_name="mobilenetv2", encoder_digit=64, **kwargs):
     if backbone_name.startswith("resnet"):
-        version = int(backbone_name.split("resnet")[-1])
+        version = int(backbone_name.split('resnet')[-1])
         backbone_model = backbone.resnet_backbone(pretrained_backbone=pretrained, 
                                                   encoder_digit=encoder_digit, 
                                                   version=version, **kwargs)
+    elif backbone_name=="signet":
+        backbone_model = backbone.SigNetBackbone()
+        
     else:
         backbone_model = backbone.mobilenetv2_backbone(pretrained_backbone=pretrained,
                                                        encoder_digit=encoder_digit, **kwargs)
         
     siamese_net = SiameseTask(feature_extractor=backbone_model)
     return siamese_net
+
+if __name__=="__main__":
+    module = siamese_net(backbone_name='signet')
