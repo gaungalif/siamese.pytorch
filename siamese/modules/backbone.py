@@ -68,7 +68,7 @@ def resnet_backbone(pretrained_backbone=True, encoder_digit=64, version=18, in_c
              '101': [3, 4, 23, 3], '152': [3, 8, 36, 3]}
     name_ver = 'resnet'+str(version)
 
-    backbone_model = ResNetBackbone(resnet.BasicBlock, block[str(version)], **kwargs)
+    backbone_model = ResNetBackbone(resnet.BasicBlock, block[str(version)])
     if pretrained_backbone:
         state_dict = model_zoo.load_url(resnet.model_urls[name_ver])
         backbone_model.load_state_dict(state_dict)
