@@ -7,6 +7,47 @@ from torchvision.models import resnet, mobilenetv2
 
 from . import classifier
 
+class SigNetBackbone(nn.Module):
+    def __init__(self, ):
+        super().__init__()
+
+        self.cnn = nn.Sequential(
+
+            nn.Conv2d(3, 96, kernel_size=11,stride=1),
+            nn.ReLU(inplace=True),
+            nn.LocalResponseNorm(size=5, alpha=0.0001, beta=0.75, k=2),
+            nn.MaxPool2d(3, stride=2),
+
+            nn.Conv2d(96, 256, kernel_size=5, stride=1, padding=2),
+            nn.ReLU(inplace=True),
+            nn.LocalResponseNorm(size=5, alpha=0.0001, beta=0.75, k=2),
+            nn.MaxPool2d(3, stride=2),
+            nn.Dropout2d(p=0.3),
+
+            nn.Conv2d(256, 384, kernel_size=3,stride=1,padding=1),
+            nn.ReLU(inplace=True),
+            nn.Conv2d(384, 256 , kernel_size=3,stride=1,padding=1),
+            nn.ReLU(inplace=True),
+            nn.MaxPool2d(3, stride=2),
+            nn.Dropout2d(p=0.3),
+
+        )
+
+        self.fc = nn.Sequential(
+            nn.Linear(30976, 1024),
+            nn.ReLU(inplace=True),
+            nn.Dropout2d(p=0.5),
+
+            nn.Linear(1024, 128),
+            nn.ReLU(inplace=True),
+        )
+        
+    def forward(self, x):
+        # Forward pass 
+        output = self.cnn(x)
+        output = output.view(output.size()[0], -1)
+        output = self.fc(output)
+        return output
 
 
 class ResNetBackbone(resnet.ResNet):
@@ -37,7 +78,7 @@ def resnet_backbone(pretrained_backbone=True, encoder_digit=64, version=18, in_c
 
 
 def mobilenetv2_backbone(pretrained_backbone=True, encoder_digit=64, progress=True, **kwargs):
-    backbone_model = mobilenetv2.MobileNetV2(**kwargs)
+    backbone_model = mobilenetv2.MobileNetV2()
     if pretrained_backbone:
         state_dict = load_state_dict_from_url(mobilenetv2.model_urls['mobilenet_v2'], progress=progress)
         backbone_model.load_state_dict(state_dict)
