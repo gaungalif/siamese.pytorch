@@ -18,6 +18,7 @@ if __name__ == "__main__":
     parser.add_argument('--data_dir', type=str, default='./dataset/omniglot/Malay_(Jawi_-_Arabic)')
     parser.add_argument('--batch_size', type=int, default=2)
     parser.add_argument('--num_workers', type=int, default=2)
+    parser.add_argument('--backbone_name', type=str, default='signet')
     
     parser = pl.Trainer.add_argparse_args(parser)
     hparams = parser.parse_args()
@@ -28,7 +29,8 @@ if __name__ == "__main__":
     # datamodule.setup()
 
     # print('validset lenght : ',len(datamodule.validset))
-    module = siamese_net(pretrained=True, backbone_name='resnet', encoder_digit=64)
+    module = siamese_net(pretrained=True, encoder_digit=128, **dict_args)
+    print(module)
     model_checkpoint = ModelCheckpoint(
         dirpath='checkpoints/',
         save_top_k=1,
