@@ -69,8 +69,8 @@ def siamese_net(pretrained=True, backbone_name="mobilenetv2", encoder_digit=64, 
         backbone_model = backbone.resnet_backbone(pretrained_backbone=pretrained, 
                                                   encoder_digit=encoder_digit, 
                                                   version=version, **kwargs)
-    elif backbone_name=="signet":
-        backbone_model = backbone.SigNetBackbone()
+    elif backbone_name=="siamese":
+        backbone_model = backbone.SiameseBackbone()
         
     else:
         backbone_model = backbone.mobilenetv2_backbone(pretrained_backbone=pretrained,
