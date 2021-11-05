@@ -1,54 +1,37 @@
 import torch
 import torch.nn as nn
-import torch.nn.functional as functional
+import torch.nn.functional as F
 from torch.hub import load_state_dict_from_url
 import torch.utils.model_zoo as model_zoo
 from torchvision.models import resnet, mobilenetv2
 
 from . import classifier
 
-class SigNetBackbone(nn.Module):
-    def __init__(self, ):
+class SiameseBackbone(nn.Module):
+    def __init__(self, n_classes=32):
         super().__init__()
+        self.conv1 = nn.Conv2d(1, 64, 10)
+        self.conv2 = nn.Conv2d(64, 128, 7)
+        self.conv3 = nn.Conv2d(128, 128, 4)
+        self.conv4 = nn.Conv2d(128, 256, 4)
+        self.n_classes=n_classes
+        
+        self.classifier = classifier.medium_classifier(in_features=1024, n_classes=self.n_classes)
 
-        self.cnn = nn.Sequential(
-
-            nn.Conv2d(3, 96, kernel_size=11,stride=1),
-            nn.ReLU(inplace=True),
-            nn.LocalResponseNorm(size=5, alpha=0.0001, beta=0.75, k=2),
-            nn.MaxPool2d(3, stride=2),
-
-            nn.Conv2d(96, 256, kernel_size=5, stride=1, padding=2),
-            nn.ReLU(inplace=True),
-            nn.LocalResponseNorm(size=5, alpha=0.0001, beta=0.75, k=2),
-            nn.MaxPool2d(3, stride=2),
-            nn.Dropout2d(p=0.3),
-
-            nn.Conv2d(256, 384, kernel_size=3,stride=1,padding=1),
-            nn.ReLU(inplace=True),
-            nn.Conv2d(384, 256 , kernel_size=3,stride=1,padding=1),
-            nn.ReLU(inplace=True),
-            nn.MaxPool2d(3, stride=2),
-            nn.Dropout2d(p=0.3),
-
-        )
-
-        self.fc = nn.Sequential(
-            nn.Linear(30976, 1024),
-            nn.ReLU(inplace=True),
-            nn.Dropout2d(p=0.5),
-
-            nn.Linear(1024, 128),
-            nn.ReLU(inplace=True),
-        )
         
     def forward(self, x):
-        # Forward pass 
-        output = self.cnn(x)
-        output = output.view(output.size()[0], -1)
-        output = self.fc(output)
-        return output
+        out = F.relu(F.max_pool2d(self.conv1(x), 2))
+        out = F.relu(F.max_pool2d(self.conv2(out), 2))
+        out = F.relu(F.max_pool2d(self.conv3(out), 2))
+        out = F.relu(self.conv4(out))
+#         print(out.shape)
+        out = out.view(out.shape[0], -1)
+#         len_out = len(out[1])
+#         print(len_out)
 
+#         print(fc)
+        out = self.classifier(out)
+        return out
 
 class ResNetBackbone(resnet.ResNet):
     def __init__(self, block, layers, num_classes=1000):
