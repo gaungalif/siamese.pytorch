@@ -8,15 +8,14 @@ from torchvision.models import resnet, mobilenetv2
 from . import classifier
 
 class SiameseBackbone(nn.Module):
-    def __init__(self, n_classes=32):
+    def __init__(self, encoder_digit=32):
         super().__init__()
         self.conv1 = nn.Conv2d(1, 64, 10)
         self.conv2 = nn.Conv2d(64, 128, 7)
         self.conv3 = nn.Conv2d(128, 128, 4)
         self.conv4 = nn.Conv2d(128, 256, 4)
-        self.n_classes=n_classes
         
-        self.classifier = classifier.medium_classifier(in_features=1024, n_classes=self.n_classes)
+        self.classifier = classifier.medium_classifier(in_features=1024, n_classes=encoder_digit)
 
         
     def forward(self, x):
@@ -59,6 +58,9 @@ def resnet_backbone(pretrained_backbone=True, encoder_digit=64, version=18, in_c
     backbone_model.fc = classifier.Classfiers(in_features=expansion, n_classes=encoder_digit)
     return backbone_model
 
+def siamese_backbone(encoder_digit=32, **kwargs):
+    backbone_model = SiameseBackbone(encoder_digit)
+    return backbone_model
 
 def mobilenetv2_backbone(pretrained_backbone=True, encoder_digit=64, progress=True, **kwargs):
     backbone_model = mobilenetv2.MobileNetV2()

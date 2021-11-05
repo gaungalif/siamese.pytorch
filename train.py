@@ -18,7 +18,7 @@ if __name__ == "__main__":
     parser.add_argument('--data_dir', type=str, default='./dataset/omniglot/Malay_(Jawi_-_Arabic)')
     parser.add_argument('--batch_size', type=int, default=2)
     parser.add_argument('--num_workers', type=int, default=2)
-    parser.add_argument('--backbone_name', type=str, default='signet')
+    parser.add_argument('--backbone_name', type=str, default='siamese')
     parser.add_argument('--simmilar_data_multiplier', type=int, default=20)
 
     
