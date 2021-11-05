@@ -19,6 +19,9 @@ if __name__ == "__main__":
     parser.add_argument('--batch_size', type=int, default=2)
     parser.add_argument('--num_workers', type=int, default=2)
     parser.add_argument('--backbone_name', type=str, default='signet')
+    parser.add_argument('--simmilar_data_multiplier', type=int, default=20)
+
+    
     
     parser = pl.Trainer.add_argparse_args(parser)
     hparams = parser.parse_args()
@@ -29,7 +32,7 @@ if __name__ == "__main__":
     # datamodule.setup()
 
     # print('validset lenght : ',len(datamodule.validset))
-    module = siamese_net(pretrained=True, encoder_digit=128, **dict_args)
+    module = siamese_net(pretrained=True, encoder_digit=32, **dict_args)
     print(module)
     model_checkpoint = ModelCheckpoint(
         dirpath='checkpoints/',
