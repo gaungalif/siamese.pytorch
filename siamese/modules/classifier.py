@@ -29,6 +29,29 @@ class Classfiers(nn.Module):
         x = self.classfiers(x)
         return x
 
+    
+class MediumClassfiers(nn.Module):
+    def __init__(self, in_features: int, n_classes: int, 
+                 use_batchnorm: bool = True, use_dropout: bool = True, 
+                 dprob: List[float] = [0.5,0.3], **kwargs):
+        super(MediumClassfiers, self).__init__()
+        modules = []
+        if use_batchnorm: modules.append(nn.BatchNorm1d(in_features))
+        if use_dropout: modules.append(nn.Dropout(dprob[0]))
+        modules.append(nn.Linear(in_features, in_features // 2))
+        modules.append(nn.ReLU(inplace=True))
+        
+
+        if use_batchnorm: modules.append(nn.BatchNorm1d(in_features//2))
+        if use_dropout: modules.append(nn.Dropout(dprob[1]))
+        modules.append(nn.Linear(in_features //2, n_classes))
+
+        self.classfiers = nn.Sequential(*modules)
+
+    def forward(self, x: torch.Tensor):
+        x = self.classfiers(x)
+        return x
+
 
 class SimpleClassifiers(nn.Module):
     def __init__(self, in_features: int, n_classes: int, 
@@ -47,8 +70,18 @@ class SimpleClassifiers(nn.Module):
         if self.use_dropout: x = self.dropout(x)
         x = self.fc(x)
         return x
-    
-    
+
+def classifier(in_features: int, n_classes: int,
+               use_batchnorm: bool = True, use_dropout: bool = True,
+               dprob: List[float] = [0.5,0.3,0.2], **kwargs):
+    return Classfiers(in_features,n_classes, use_batchnorm, use_dropout, dprob, **kwargs)
+     
+def medium_classifier(in_features: int, n_classes: int,
+               use_batchnorm: bool = True, use_dropout: bool = True,
+               dprob: List[float] = [0.5,0.3], **kwargs):
+    return MediumClassfiers(in_features,n_classes, use_batchnorm, use_dropout, dprob, **kwargs)
+     
+
 def simple_squential_classifier(in_features: int, n_classes: int, 
                                 use_batchnorm: bool = True, use_dropout: bool = True, 
                                 dprob: float = 0.3, **kwargs):
