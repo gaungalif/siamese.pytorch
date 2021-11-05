@@ -13,12 +13,13 @@ from PIL import Image, ImageOps
 
 class GeneralDataset(Dataset):
     def __init__(self, root, train: bool = True, val_size: float = 0.2,
-                 main_transform=None, pair_transform=None, comp_transform=None, 
-                 invert=False, **kwargs):
+                simmilar_pair_multiplier: int = 20, main_transform=None, pair_transform=None, 
+                 comp_transform=None, invert=False, **kwargs):
         super(GeneralDataset).__init__()
         self.root = root
         self.train = train
         self.val_size = val_size
+        self.simmilar_pair_multiplier = simmilar_pair_multiplier
         self.main_transform = main_transform
         self.pair_transform = pair_transform
         self.comp_transform = comp_transform
@@ -93,18 +94,19 @@ class GeneralDataset(Dataset):
         simm_pair = {'main_image': [], 'main_label_idx':[], 'main_label_name': [], 
                     'comp_image': [], 'comp_label_idx':[], 'comp_label_name': [], 
                     'label': [], 'status':[]}
-        for key, list_value in self.label_image_dict.items():
-            for idx, main_img in enumerate(list_value):
-                for jdx, comp_image in enumerate(list_value):
-                    if idx!=jdx:
-                        simm_pair['main_image'].append(main_img)
-                        simm_pair['main_label_name'].append(self._dataset.classes[key])
-                        simm_pair['main_label_idx'].append(key)
-                        simm_pair['comp_image'].append(comp_image)
-                        simm_pair['comp_label_name'].append(self._dataset.classes[key])
-                        simm_pair['comp_label_idx'].append(key)
-                        simm_pair['label'] = int(key != key)
-                        simm_pair['status'] = 'similar'
+        for _ in range(self.simmilar_pair_multiplier):
+            for key, list_value in self.label_image_dict.items():
+                for idx, main_img in enumerate(list_value):
+                    for jdx, comp_image in enumerate(list_value):
+                        if idx!=jdx:
+                            simm_pair['main_image'].append(main_img)
+                            simm_pair['main_label_name'].append(self._dataset.classes[key])
+                            simm_pair['main_label_idx'].append(key)
+                            simm_pair['comp_image'].append(comp_image)
+                            simm_pair['comp_label_name'].append(self._dataset.classes[key])
+                            simm_pair['comp_label_idx'].append(key)
+                            simm_pair['label'] = int(key != key)
+                            simm_pair['status'] = 'similar'
         simm_df = pd.DataFrame(simm_pair) 
         return simm_df
 
@@ -145,6 +147,24 @@ class GeneralDataset(Dataset):
 
         diff_df = pd.concat(diff_df_list)
         return diff_df
+
+    def _balance_similar_pair(self, simm_df, diff_df, random_state=1261):
+        simm_df_list = []
+        for idx, name in enumerate(self._dataset.classes):
+            label_name = self._dataset.classes[idx]
+            simm_df_by_idx = simm_df[simm_df['main_label_name'] == label_name]
+            len_simm_idx = len(simm_df_by_idx)
+
+            label_name = self._dataset.classes[idx]
+            diff_df_by_idx = diff_df[diff_df['main_label_name'] == label_name]
+            len_diff_idx = len(diff_df_by_idx)
+
+
+            for _ in enumerate(range(len_diff_idx)):
+                simm_df_list.append(simm_df_by_idx)
+            
+        simm_df = pd.concat(simm_df_list)
+        return simm_df
     
     def _combine_simm_diff_pair(self, simm_df, diff_df, shuffle=True, random_state=1261):
         main_df = pd.concat([simm_df, diff_df])
