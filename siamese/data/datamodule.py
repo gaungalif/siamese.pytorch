@@ -11,12 +11,17 @@ from .dataset import GeneralDataset
 def transform_fn(train=False):
     if train:                                 
         return PairCompose([
-            # PairRandomRotation(20),
+            PairResize((80,80)),
+            PairGrayscale(),
             PairToTensor(),
+#             normalize
         ])
     else:
         return PairCompose([
+            PairResize((80,80)),
+            PairGrayscale(),
             PairToTensor(),
+#             normalize
         ])
 
 
