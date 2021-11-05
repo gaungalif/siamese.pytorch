@@ -80,4 +80,4 @@ def siamese_net(pretrained=True, backbone_name="mobilenetv2", encoder_digit=64, 
     return siamese_net
 
 if __name__=="__main__":
-    module = siamese_net(backbone_name='signet')
+    module = siamese_net(backbone_name='siamese')
