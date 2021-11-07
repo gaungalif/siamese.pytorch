@@ -5,9 +5,9 @@ Siamese Network for Omniglot dataset
 
 This repository contains the code to train Omniglot datasets taken from kaggle as an image simmiliarity recognition using pytorch. We use a Siamese Network that contain backbone and classifier from Convolutional Siamese Network architecture. Unlike the traditional CNNs that take an input of 1 image to generate one-shot vector suggesting the category the image belongs to, the Siamese architecture takes in 2 images and feeds them into 2 CNNs with the same structure, then the output will be merged together and feed into fully connected layers to output 32 encoder digits that represents the distances of the two vector of the images with pairwise distances.
 
-Instead of learning which image belongs to which class, the Siamese Architecture learns how to detect different handwritten characters from omniglob datasets.
+Instead of learning which image belongs to which class, the Siamese Architecture learns how to detect different handwritten characters from omniglob datasets. I got 71% of accuracy with the omniglot Alphabet_of_the_Magi datasets
+feel free to try, comment, and share! XD
 
-- store the weight at `weights/`
 
 ## Requirment:
 - onnx==1.10.1
@@ -54,8 +54,9 @@ python train.py  --data_dir './dataset/omniglot/Alphabet_of_the_Magi' --max_epoc
 - the program will show 2 pairs of images and with the predicted numbers, labels, and the threshold for the simmilarity
 
 - download the onnx weight that i have been trained for the 'omniglot/Alphabet_of_the_Magi' datasets here: 
-
 https://drive.google.com/file/d/1PMXItnbH0NjAGT7np_75yEovuH_PZkDE/view?usp=sharing
+- store the weight at `weights/`
+
 
 example command: 
 ```
