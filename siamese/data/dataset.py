@@ -13,13 +13,13 @@ from PIL import Image, ImageOps
 
 class GeneralDataset(Dataset):
     def __init__(self, root, train: bool = True, val_size: float = 0.2,
-                simmilar_pair_multiplier: int = 20, main_transform=None, pair_transform=None, 
+                simmilar_data_multiplier: int = 20, main_transform=None, pair_transform=None, 
                  comp_transform=None, invert=False, **kwargs):
         super(GeneralDataset).__init__()
         self.root = root
         self.train = train
         self.val_size = val_size
-        self.simmilar_pair_multiplier = simmilar_pair_multiplier
+        self.simmilar_data_multiplier = simmilar_data_multiplier
         self.main_transform = main_transform
         self.pair_transform = pair_transform
         self.comp_transform = comp_transform
@@ -72,7 +72,7 @@ class GeneralDataset(Dataset):
     
     def _split_train_valid_percategory(self, df_data, label_name_list, test_size=0.2, random_state=1261):
         train_df_list, valid_df_list = [], []
-        for idx in tqdm(range(len(label_name_list))):
+        for idx in range(len(label_name_list)):
             df_data_percat = df_data[df_data['main_label_idx']==label_name_list[idx]].reset_index(drop=True)
             train_df_percat, valid_df_percat = train_test_split(df_data_percat, test_size=test_size, random_state=random_state)
             train_df_list.append(train_df_percat)
@@ -94,7 +94,7 @@ class GeneralDataset(Dataset):
         simm_pair = {'main_image': [], 'main_label_idx':[], 'main_label_name': [], 
                     'comp_image': [], 'comp_label_idx':[], 'comp_label_name': [], 
                     'label': [], 'status':[]}
-        for _ in range(self.simmilar_pair_multiplier):
+        for _ in range(self.simmilar_data_multiplier):
             for key, list_value in self.label_image_dict.items():
                 for idx, main_img in enumerate(list_value):
                     for jdx, comp_image in enumerate(list_value):
@@ -114,7 +114,7 @@ class GeneralDataset(Dataset):
         diff_pair = {'main_image': [], 'main_label_idx':[], 'main_label_name': [], 
              'comp_image': [], 'comp_label_idx':[], 'comp_label_name': [], 
              'label': [], 'status':[]}
-        for main_key, main_list_value in tqdm(self.label_image_dict.items()):
+        for main_key, main_list_value in self.label_image_dict.items():
             for diff_key, diff_list_value in self.label_image_dict.items():
                 if main_key!=diff_key:
                     for idx, main_img in enumerate(main_list_value):
