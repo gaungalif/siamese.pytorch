@@ -12,7 +12,7 @@ from data.datamodule import OmniglotDataModule
 
 
 def image_loader(idx: int = None, data_dir: str = None):
-    dataset = OmniglotDataModule(data_dir,batch_size=32,num_workers=2,simmilar_data_multiplier=1)
+    dataset = OmniglotDataModule(data_dir, batch_size=32, num_workers=2, simmilar_data_multiplier=1)
     valid_loader = dataset.val_dataloader()
     dataiter = iter(valid_loader)
     for _ in range(idx):
