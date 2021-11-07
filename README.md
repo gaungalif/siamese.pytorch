@@ -3,9 +3,11 @@ Siamese Network for Omniglot dataset
 
 ![](https://github.com/gaungalif/siamese.pytorch/blob/main/results/results.gif)
 
-This repository contains the code to train Omniglot datasets taken from kaggle as an image simmiliarity recognition using pytorch. We use a Siamese Network that contain backbone and classifier from Convolutional Siamese Network architecture. Unlike the traditional CNNs that take an input of 1 image to generate one-shot vector suggesting the category the image belongs to, the Siamese architecture takes in 2 images and feeds them into 2 CNNs with the same structure, then the output will be merged together and feed into fully connected layers to output 32 encoder digits that represents the distances of the two vector of the images with pairwise distances.
+This repository contains the code to train Omniglot datasets taken from kaggle as an image simmiliarity recognition using pytorch. We use a Siamese Network that contains a backbone and classifier from Convolutional Siamese Network architecture. Unlike the traditional CNNs that take an input of 1 image to generate a one-shot vector suggesting the category, the image belongs to, the Siamese architecture takes in 2 images and feeds them into 2 CNNs with the same structure, then the output will be merged together and feed into fully connected layers to output 32 encoder digits that represents the distances of the two vector of the images with pairwise distances.
 
-Instead of learning which image belongs to which class, the Siamese Architecture learns how to detect different handwritten characters from omniglob datasets. I got 71% of accuracy with the omniglot Alphabet_of_the_Magi datasets
+
+
+Instead of learning which image belongs to which class, the Siamese Architecture learns how to detect different handwritten characters from omniglot datasets. I got 71% of accuracy with the omniglot Alphabet_of_the_Magi datasets
 feel free to try, comment, and share! XD
 
 
